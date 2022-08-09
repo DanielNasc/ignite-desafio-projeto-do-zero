@@ -12,26 +12,4 @@
         font-size: 1.125rem; // 18px
         margin-top: 0.5rem; 
     }
-
-    .postPreviewMeta {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-
-        margin-top: 1rem;
-
-        svg {
-            margin-right: 0.5rem;
-        }
-        
-        span {
-            color: var(--gray-100);
-            
-            font-size: 0.875rem; // 14px
-
-            &+span {
-                margin-left: 1rem;
-            }
-        }
-    }
 }

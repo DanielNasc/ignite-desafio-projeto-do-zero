@@ -3,6 +3,7 @@ import { FiCalendar, FiUser } from 'react-icons/fi';
 
 import { formatDate } from '../../utils/formatDate';
 
+import commonStyles from '../../styles/common.module.scss';
 import styles from './PostPreview.module.scss';
 
 interface Post {
@@ -25,7 +26,7 @@ export function PostPreview({ post }: PostPreviewProps): JSX.Element {
       <div className={styles.postPreviewContainer}>
         <h1>{post.data.title}</h1>
         <p>{post.data.subtitle}</p>
-        <div className={styles.postPreviewMeta}>
+        <div className={commonStyles.info}>
           <span>
             <FiUser />
             {post.data.author}

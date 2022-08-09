@@ -57,7 +57,7 @@ export default function Post({ post }: PostProps): JSX.Element {
       >
         <h1>{post.data.title}</h1>
 
-        <div className={styles.info}>
+        <div className={commonStyles.info}>
           <span>
             <FiCalendar />
             {formatDate(post.first_publication_date)}
