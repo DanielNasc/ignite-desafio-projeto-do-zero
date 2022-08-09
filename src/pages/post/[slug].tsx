@@ -1,13 +1,14 @@
 import { asHTML } from '@prismicio/helpers';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
-import { FiCalendar, FiUser } from 'react-icons/fi';
+import { FiCalendar, FiClock, FiUser } from 'react-icons/fi';
 // import Image from 'next/image';
 
 import { getPrismicClient } from '../../services/prismic';
 
 import commonStyles from '../../styles/common.module.scss';
 import { formatDate } from '../../utils/formatDate';
+import { timeToRead } from '../../utils/timeToRead';
 
 import styles from './post.module.scss';
 
@@ -64,6 +65,10 @@ export default function Post({ post }: PostProps): JSX.Element {
           <span>
             <FiUser />
             {post.data.author}
+          </span>
+          <span>
+            <FiClock />
+            {timeToRead(post.data.content)} min
           </span>
         </div>
 

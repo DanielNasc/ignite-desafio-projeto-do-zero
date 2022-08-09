@@ -1,4 +1,5 @@
 import { GetStaticProps } from 'next';
+import { useState } from 'react';
 import { PostPreview } from '../components/PostPreview';
 
 import { getPrismicClient } from '../services/prismic';
@@ -25,23 +26,8 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-export default function Home({ postsPagination }: HomeProps): JSX.Element {
-  return (
-    <div className={`${commonStyles.commonContainer}`}>
-      {postsPagination.results.map((post: Post) => (
-        <PostPreview key={post.uid} post={post} />
-      ))}
-    </div>
-  );
-}
-
-export const getStaticProps: GetStaticProps = async () => {
-  const prismic = getPrismicClient({});
-  const postsResponse = await prismic.getByType('post', {
-    pageSize: 1,
-  });
-
-  const postsPreview = postsResponse.results.map(
+function formatPosts(postsResponse: any): PostPagination {
+  const results = postsResponse.results.map(
     ({ uid, first_publication_date, data }) => ({
       uid,
       first_publication_date,
@@ -53,14 +39,68 @@ export const getStaticProps: GetStaticProps = async () => {
     })
   );
 
-  const postPagination: PostPagination = {
+  return {
     next_page: postsResponse.next_page,
-    results: postsPreview,
+    results,
   };
+}
+
+/*
+  Nesse arquivo você deve renderizar todos os posts da paginação e exibir 
+  o botão Carregar mais posts caso existam mais posts a ser carregados 
+  (ou seja, o valor next_page retornado pela Prismic não pode ser null). 
+  Caso contrário, o botão não deve ser renderizado.
+*/
+
+export default function Home({ postsPagination }: HomeProps): JSX.Element {
+  const { results } = postsPagination;
+
+  const [posts, setPosts] = useState(results);
+  const [nextPage, setNextPage] = useState(postsPagination.next_page);
+
+  async function handleAddMorePosts(): Promise<void> {
+    if (!nextPage) {
+      return;
+    }
+
+    const nextPosts = await fetch(nextPage);
+    const nextPostsJson = await nextPosts.json();
+    const nextPostsFormatted = formatPosts(nextPostsJson);
+
+    setPosts([...posts, ...nextPostsFormatted.results]);
+    setNextPage(nextPostsFormatted.next_page);
+  }
+
+  return (
+    <div className={`${commonStyles.commonContainer}`}>
+      {posts.map((post: Post) => (
+        <PostPreview key={post.uid} post={post} />
+      ))}
+
+      {nextPage && (
+        <button
+          onClick={handleAddMorePosts}
+          type="button"
+          className={styles.loadMorePosts}
+        >
+          Carregar mais posts
+        </button>
+      )}
+    </div>
+  );
+}
+
+export const getStaticProps: GetStaticProps = async () => {
+  const prismic = getPrismicClient({});
+  const postsResponse = await prismic.getByType('post', {
+    pageSize: 1,
+  });
+
+  const postsPagination = formatPosts(postsResponse);
 
   return {
     props: {
-      postsPagination: postPagination,
+      postsPagination,
     },
   };
 };
