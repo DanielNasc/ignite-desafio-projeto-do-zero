@@ -1,6 +1,7 @@
-import { format } from 'date-fns';
-import ptBR from 'date-fns/locale/pt-BR';
+import Link from 'next/link';
 import { FiCalendar, FiUser } from 'react-icons/fi';
+
+import { formatDate } from '../../utils/formatDate';
 
 import styles from './PostPreview.module.scss';
 
@@ -18,30 +19,23 @@ interface PostPreviewProps {
   post: Post;
 }
 
-// format date with date-fns
-function formatDate(date: string | null): string {
-  if (!date) {
-    return '';
-  }
-
-  return format(new Date(date), 'dd MMM yyyy', { locale: ptBR });
-}
-
 export function PostPreview({ post }: PostPreviewProps): JSX.Element {
   return (
-    <div className={styles.postPreviewContainer}>
-      <h1>{post.data.title}</h1>
-      <p>{post.data.subtitle}</p>
-      <div className={styles.postPreviewMeta}>
-        <span>
-          <FiUser />
-          {post.data.author}
-        </span>
-        <span>
-          <FiCalendar />
-          {formatDate(post.first_publication_date)}
-        </span>
+    <Link href={`/post/${post.uid}`}>
+      <div className={styles.postPreviewContainer}>
+        <h1>{post.data.title}</h1>
+        <p>{post.data.subtitle}</p>
+        <div className={styles.postPreviewMeta}>
+          <span>
+            <FiUser />
+            {post.data.author}
+          </span>
+          <span>
+            <FiCalendar />
+            {formatDate(post.first_publication_date)}
+          </span>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }
